@@ -57,4 +57,4 @@ Projeye katkıda bulunmak istiyorsanız, lütfen öncelikle değişiklik yapmak 
 
 ## Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır - daha fazla detay için [LICENSE.md](LICENSE.md) dosyasına bakın.
+Bu proje MIT lisansı altında lisanslanmıştır - daha fazla detay için [LICENSE](LICENSE) dosyasına bakın.

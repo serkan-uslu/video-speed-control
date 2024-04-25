@@ -1,1 +1,3 @@
-console.log('This is a popup!')
+const test = 'a';
+const a = test;
+alert(a);

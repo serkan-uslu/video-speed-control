@@ -2,6 +2,7 @@
 
 /**
  * Event listener for increasing the video playback speed.
+ * Test lint-staged
  */
 document.getElementById('increaseSpeed').addEventListener('click', function () {
   changePlaybackRate(0.5);

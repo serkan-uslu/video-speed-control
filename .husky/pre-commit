@@ -1,1 +1,4 @@
+npx lint-staged
+npm run prettify-html
+npm run prettify-js
 npm run lint

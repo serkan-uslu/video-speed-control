@@ -1,4 +1,4 @@
-# Video Speed Controller Extension
+# Video Speed Control - Extension
 
 Video Speed Controller, kullanıcıların aktif bir web sayfasındaki video oynatma hızını artırma, azaltma ve sıfırlama yeteneği sağlayan bir Chrome uzantısıdır. Bu, eğitim videoları, dersler ve diğer medya türleri için kullanışlı bir araçtır.
 

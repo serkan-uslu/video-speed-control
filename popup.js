@@ -110,11 +110,11 @@ function checkForVideo() {
 
         if (videoFound) {
           statusDisplay.innerHTML =
-            '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">Video detected on this page.</div>';
+            '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video tespit edildi.</div>';
           controls.style.display = 'block';
         } else {
           statusDisplay.innerHTML =
-            '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">No video found on this page.</div>';
+            '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video bulunamadı.</div>';
           controls.style.display = 'none';
         }
       }

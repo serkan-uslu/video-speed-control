@@ -15,7 +15,7 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "npm run docs",
-      "git add"
+      "git add ."
     ]
   },
   "keywords": [],

@@ -40,57 +40,32 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/* eslint-disable no-undef */
-
-/**
- * Event listener for increasing the video playback speed.
- * Test lint-staged
- */
-document.getElementById('increaseSpeed').addEventListener('click', function () {
-  changePlaybackRate(0.5);
-});
-
-/**
- * Event listener for decreasing the video playback speed.
- */
-document.getElementById('decreaseSpeed').addEventListener('click', function () {
-  changePlaybackRate(-0.5);
-});
-
-/**
- * Event listener for resetting the video playback speed to normal.
- */
-document.getElementById('resetSpeed').addEventListener('click', function () {
-  resetPlaybackRate();
-});
-
-/**
- * Initializes the functionality once the DOM is fully loaded.
- */
 document.addEventListener('DOMContentLoaded', function () {
+  const increaseSpeedButton = document.getElementById('increaseSpeed');
+  const decreaseSpeedButton = document.getElementById('decreaseSpeed');
+  const resetSpeedButton = document.getElementById('resetSpeed');
+
+  if (increaseSpeedButton) {
+    increaseSpeedButton.addEventListener('click', function () {
+      changePlaybackRate(0.5);
+    });
+  }
+
+  if (decreaseSpeedButton) {
+    decreaseSpeedButton.addEventListener('click', function () {
+      changePlaybackRate(-0.5);
+    });
+  }
+
+  if (resetSpeedButton) {
+    resetSpeedButton.addEventListener('click', function () {
+      resetPlaybackRate();
+    });
+  }
+
   checkForVideo();
   updateSpeedDisplay();
 });
-
-/**
- * Changes the playback rate of the video.
- * @param {number} change - The amount to change the playback rate by.
- */
-function changePlaybackRate(change) {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabs[0].id },
-        func: adjustPlaybackRate,
-        args: [change],
-      },
-      (results) => {
-        if (results &amp;&amp; results[0] &amp;&amp; results[0].result !== undefined) {
-          document.getElementById('speedDisplay').innerText = results[0].result.toFixed(1) + 'x';
-        }
-      }
-    );
-  });
-}
 
 /**
  * Adjusts the playback rate of a video element on the current tab.
@@ -107,28 +82,55 @@ function adjustPlaybackRate(change) {
 }
 
 /**
+ * Changes the playback rate of the video.
+ * @param {number} change - The amount to change the playback rate by.
+ */
+function changePlaybackRate(change) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs[0]) {
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          func: adjustPlaybackRate,
+          args: [change],
+        },
+        (results) => {
+          const speedDisplay = document.getElementById('speedDisplay');
+          if (speedDisplay &amp;&amp; results &amp;&amp; results[0] &amp;&amp; results[0].result !== undefined) {
+            speedDisplay.innerText = results[0].result.toFixed(1) + 'x';
+          }
+        }
+      );
+    }
+  });
+}
+
+/**
  * Resets the playback rate of the video to normal (1.0x).
  */
 function resetPlaybackRate() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabs[0].id },
-        func: function () {
-          var video = document.querySelector('video');
-          if (video) {
-            video.playbackRate = 1.0;
-            return video.playbackRate;
-          }
-          return 1.0;
+    if (tabs[0]) {
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          func: function () {
+            var video = document.querySelector('video');
+            if (video) {
+              video.playbackRate = 1.0;
+              return video.playbackRate;
+            }
+            return 1.0;
+          },
         },
-      },
-      (results) => {
-        if (results &amp;&amp; results[0] &amp;&amp; results[0].result) {
-          document.getElementById('speedDisplay').innerText = results[0].result.toFixed(1) + 'x';
+        (results) => {
+          const speedDisplay = document.getElementById('speedDisplay');
+          if (speedDisplay &amp;&amp; results &amp;&amp; results[0] &amp;&amp; results[0].result) {
+            speedDisplay.innerText = results[0].result.toFixed(1) + 'x';
+          }
         }
-      }
-    );
+      );
+    }
   });
 }
 
@@ -138,29 +140,34 @@ function resetPlaybackRate() {
  */
 function checkForVideo() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabs[0].id },
-        func: function () {
-          return !!document.querySelector('video');
+    if (tabs[0]) {
+      // null check for tabs[0]
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          func: function () {
+            return !!document.querySelector('video');
+          },
         },
-      },
-      function (results) {
-        const videoFound = results[0].result;
-        const statusDisplay = document.getElementById('videoStatus');
-        const controls = document.getElementById('controls');
-
-        if (videoFound) {
-          statusDisplay.innerHTML =
-            '&lt;div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video tespit edildi.&lt;/div>';
-          controls.style.display = 'block';
-        } else {
-          statusDisplay.innerHTML =
-            '&lt;div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video bulunamadı.&lt;/div>';
-          controls.style.display = 'none';
+        function (results) {
+          if (results &amp;&amp; results[0] &amp;&amp; results[0].result !== undefined) {
+            // null and undefined checks
+            const videoFound = results[0].result;
+            const statusDisplay = document.getElementById('videoStatus');
+            const controls = document.getElementById('controls');
+            if (videoFound) {
+              statusDisplay.innerHTML =
+                '&lt;div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video tespit edildi.&lt;/div>';
+              controls.style.display = 'block';
+            } else {
+              statusDisplay.innerHTML =
+                '&lt;div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Bu sayfada video bulunamadı.&lt;/div>';
+              controls.style.display = 'none';
+            }
+          }
         }
-      }
-    );
+      );
+    }
   });
 }
 
@@ -169,20 +176,31 @@ function checkForVideo() {
  */
 function updateSpeedDisplay() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabs[0].id },
-        func: function () {
-          var video = document.querySelector('video');
-          return video ? video.playbackRate : 1.0;
+    if (tabs[0]) {
+      // null check for tabs[0]
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabs[0].id },
+          func: function () {
+            var video = document.querySelector('video');
+            if (video) {
+              // null check for video
+              return video.playbackRate;
+            }
+            return 1.0;
+          },
         },
-      },
-      (results) => {
-        if (results &amp;&amp; results[0] &amp;&amp; results[0].result !== undefined) {
-          document.getElementById('speedDisplay').innerText = results[0].result.toFixed(1) + 'x';
+        (results) => {
+          if (results &amp;&amp; results[0] &amp;&amp; results[0].result !== undefined) {
+            // null and undefined checks
+            const speedDisplay = document.getElementById('speedDisplay');
+            if (speedDisplay) {
+              speedDisplay.innerText = results[0].result.toFixed(1) + 'x';
+            }
+          }
         }
-      }
-    );
+      );
+    }
   });
 }
 </code></pre>
@@ -197,7 +215,7 @@ function updateSpeedDisplay() {
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Apr 26 2024 07:36:33 GMT+0300 (GMT+03:00) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sat Apr 27 2024 06:34:57 GMT+0300 (GMT+03:00) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
